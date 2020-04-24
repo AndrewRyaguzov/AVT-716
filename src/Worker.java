@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
 
 public class Worker extends Character{
 
@@ -7,13 +8,18 @@ public class Worker extends Character{
     ImageIcon imageIcon = new ImageIcon(new ImageIcon(getClass().getResource(
             "/Images/Worker.png")).getImage().getScaledInstance(50,50,Image.SCALE_DEFAULT));
 
-    public Worker(int x, int y){
-        jlb = new JLabel();
+
+    public Worker(int x, int y, int lifeTime, int bornTime, HashSet<Integer> arr){
+        JLabel jlb = new JLabel();
         jlb.setBounds(x, y, imageIcon.getIconWidth(), imageIcon.getIconHeight());
         jlb.setIcon(imageIcon);
-        Main.bees.add(jlb,0,0);
-        Main.bees.repaint();
+        setJlb(jlb);
+        MainProgram.bees.add(getJlb(),0,0);
+        MainProgram.bees.repaint();
         setx(x);
         sety(y);
+        setLifeTime(lifeTime);
+        setBornTime(bornTime);
+        setId(arr);
     }
 }
