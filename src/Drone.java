@@ -1,8 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class Drone extends Character {
+public class Drone extends Character implements Serializable {
 
     static public int beeDrone = 0;
     ImageIcon imageIcon = new ImageIcon(new ImageIcon(getClass().getResource(
@@ -20,5 +21,18 @@ public class Drone extends Character {
         setLifeTime(lifeTime);
         setBornTime(bornTime);
         setId(arr);
+    }
+    public Drone(int x, int y, int lifeTime, int bornTime, int id){
+        JLabel jlb = new JLabel();
+        jlb.setBounds(x, y, imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        jlb.setIcon(imageIcon);
+        setJlb(jlb);
+        MainProgram.bees.add(getJlb(),0,0);
+        MainProgram.bees.repaint();
+        setx(x);
+        sety(y);
+        setLifeTime(lifeTime);
+        setBornTime(bornTime);
+        setId(id);
     }
 }

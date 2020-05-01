@@ -11,32 +11,29 @@ public class Habitat {
     private HashSet<Integer> arrId = new HashSet<Integer>();
     private TreeMap<Integer, Integer> arrBornTime = new TreeMap<Integer, Integer>();
     private int WIDTH = MainProgram.beesWIDTH, HEIGHT = MainProgram.HEIGHT;
-    static public int N1 = 3, N2 = 2, K = 40, P = 80, workerLifeTime = 3, droneLifeTime = 3;
+    static public int N1 = 3, N2 = 2, K = 40, P = 80, workerLifeTime = 10, droneLifeTime = 10;
     private int imageSize = 50;
     private ImageIcon imageIcon = new ImageIcon(new ImageIcon(getClass().getResource(
             "/Images/sky2.png")).getImage().getScaledInstance(WIDTH,HEIGHT, Image.SCALE_DEFAULT));
+    WorkerAI workerAI;
+    DroneAI droneAI;
 
     Habitat(){
-        JLabel tmp = new JLabel();
-        tmp.setBounds( 0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        tmp.setIcon(imageIcon);
-        MainProgram.bees.add(tmp, 0, 0);
-        MainProgram.bees.repaint();
+        createGUI();
+        workerAI = new WorkerAI();
+        droneAI = new DroneAI();
     }
-    void update(int time){
+    synchronized void update(int time){
         removeBees(time);
-
+        workerAI.setArray(arrBees);
+        droneAI.setArray(arrBees);
         if(time % N2 == 0)
         {
             int random = (int)Math.floor(Math.random()*100);
             if(random <= P) {
                 int x = (int) Math.floor(Math.random() * (WIDTH - imageSize));
                 int y = (int) Math.floor(Math.random() * (HEIGHT - imageSize));
-                Worker worker = new Worker(x, y, workerLifeTime, time, arrId);
-                arrBees.add(worker);
-                arrId.add(worker.getId());
-                arrBornTime.put(worker.getId(), worker.getBornTime());
-                Worker.beeWorker++;
+                createWorker(x, y, workerLifeTime, time);
             }
         }
         if(time % N1 == 0 && Worker.beeWorker != 0){
@@ -44,20 +41,40 @@ public class Habitat {
             if(dronePercent < K){
                 int x = (int)Math.floor(Math.random()*(WIDTH-imageSize));
                 int y = (int)Math.floor(Math.random()*(HEIGHT-imageSize));
-                Drone drone = new Drone(x, y, droneLifeTime, time, arrId);
-                arrBees.add(drone);
-                arrId.add(drone.getId());
-                arrBornTime.put(drone.getId(), drone.getBornTime());
-                Drone.beeDrone++;
+                createDrone(x, y, droneLifeTime, time);
             }
         }
+    }
+    Worker createWorker(int x, int y, int lifeTime, int bornTime){
+        Worker worker = new Worker(x, y, lifeTime, bornTime, arrId);
+        arrBees.add(worker);
+        arrId.add(worker.getId());
+        arrBornTime.put(worker.getId(), worker.getBornTime());
+        Worker.beeWorker++;
+        return worker;
+    }
+    Drone createDrone(int x, int y, int lifeTime, int bornTime){
+        Drone drone = new Drone(x, y, lifeTime, bornTime, arrId);
+        arrBees.add(drone);
+        arrId.add(drone.getId());
+        arrBornTime.put(drone.getId(), drone.getBornTime());
+        Drone.beeDrone++;
+        return drone;
+    }
+    void createGUI(){
+        JLabel tmp = new JLabel();
+        tmp.setBounds( 0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        tmp.setIcon(imageIcon);
+        MainProgram.bees.add(tmp, 0, 0);
+        MainProgram.bees.repaint();
     }
     void clear(){
         MainProgram.bees.removeAll();
         arrBees.clear();
         arrId.clear();
         arrBornTime.clear();
-        new Habitat();
+        createGUI();
+        Worker.beeWorker = Drone.beeDrone = 0;
     }
     void removeBees(int time){
         Iterator<Character> iterator = arrBees.iterator();
@@ -79,4 +96,14 @@ public class Habitat {
         }
     }
     ArrayList<Character> getArrBees(){return arrBees;}
+    void pauseAI(){
+        workerAI.setBoolStop(true);
+        droneAI.setBoolStop(true);
+    }
+    void continueAI(){
+        workerAI._continue();
+        workerAI.setBoolStop(false);
+        droneAI._continue();
+        droneAI.setBoolStop(false);
+    }
 }

@@ -1,13 +1,15 @@
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Random;
 
-public abstract class Character implements iBehaviour {
+public abstract class Character implements iBehaviour, Serializable {
 
     private int x, y;
     private JLabel jlb;
     private int lifeTime, bornTime;
     private int id;
+    private int V = 1;
 
     @Override
     public void movexy(int x, int y) {}
@@ -41,7 +43,20 @@ public abstract class Character implements iBehaviour {
         }
     }
     @Override
+    public void setId(int id){
+        this.id = id;
+    }
+    @Override
     public JLabel getJlb(){return jlb;}
     @Override
     public void setJlb(JLabel jlb){this.jlb = jlb;}
+    @Override
+    public void createJlb(){
+
+
+    }
+    @Override
+    public void setV(int V){V = this.V;}
+    @Override
+    public int getV(){return V;}
 }

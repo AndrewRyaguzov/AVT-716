@@ -13,6 +13,10 @@ public interface iBehaviour {
     void setBornTime(int bornTime);
     int getId();
     void setId(HashSet<Integer> arr);
+    void setId(int id);
     JLabel getJlb();
     void setJlb(JLabel jlb);
+    void createJlb();
+    void setV(int V);
+    int getV();
 }
