@@ -1,5 +1,7 @@
 
 import Buildings.BuildingFactory;
+import Buildings.CapitalAI;
+import Buildings.WoodAI;
 import SubClasses.Timer;
 
 import javax.swing.*;
@@ -23,12 +25,17 @@ public class App extends JFrame {
     private JMenuItem jmiTime;
 
     private BuildingFactory _buildingFactory;
+
+    private WoodAI _woodAi;
+    private CapitalAI _capitalAi;
     private JLayeredPane _habbitViewLayeredPane = new JLayeredPane();
 
     public App() {
         super("Town");
         _simulationTimer = new Timer(System.currentTimeMillis());
         _buildingFactory = new BuildingFactory(_simulationTimer, _habbitViewLayeredPane);
+        _woodAi = new WoodAI(_simulationTimer, _buildingFactory);
+        _capitalAi = new CapitalAI(_simulationTimer, _buildingFactory);
         InitGui();
     }
 
@@ -39,7 +46,7 @@ public class App extends JFrame {
 
         logDialog = new LogDialog(this);
         habitat = new Habitat(_buildingFactory, _habbitViewLayeredPane);
-        gui = new GUI(_buildingFactory);
+        gui = new GUI(_buildingFactory, _woodAi, _capitalAi);
 
         jmCommands = new JMenu("Комманды");
         jmiStart = new JMenuItem("Старт");
@@ -110,7 +117,7 @@ public class App extends JFrame {
 
             gui.workTime.SetTime(_simulationTimer.workTime);
 
-            gui.changeProgressBars(habitat.GetWoodProgress(), habitat.GetCapitalProgress());
+            gui.changeProgressBars(_woodAi.GetProgress(), _capitalAi.GetProgress());
         }
     }
 
@@ -191,42 +198,46 @@ public class App extends JFrame {
 
         habitat.StopHandler(_simulationTimer.workTime);
         _simulationTimer.unpause(System.currentTimeMillis());
+        _woodAi.Start();
+        _capitalAi.Start();
+        gui.SetThreadButtonEnable(true);
     }
 
-    private void Pause(){
-        if(gui.buttonStart.isEnabled()){
-            _simulationTimer.pause( System.currentTimeMillis() );
-            
-            if(gui.checkBox_showInfo.isSelected()){
+    private void Pause() {
+        gui.SetThreadButtonEnable(false);
+        if (gui.buttonStart.isEnabled()) {
+            _simulationTimer.pause(System.currentTimeMillis());
 
+            if (gui.checkBox_showInfo.isSelected()) {
+                _woodAi.Pause();
+                _capitalAi.Pause();
                 long woodBuildCount = _buildingFactory.GetAliveWoodBuildingsCount();
                 long capitalBuildCount = _buildingFactory.GetAliveCapitalBuildingsCount();
 
                 gui.buttonStart.setEnabled(false);
                 gui.tbStart.setEnabled(false);
-                gui.tbStop.setEnabled(false);                
+                gui.tbStop.setEnabled(false);
                 jmiStart.setEnabled(false);
                 jmiStop.setEnabled(false);
 
                 logDialog.Update(_buildingFactory.GetAliveBuildings().size(), woodBuildCount, capitalBuildCount,
-                                 _simulationTimer.workTime);
+                        _simulationTimer.workTime);
                 logDialog.setVisible(true);
-
-            }
-            else{
+            } else {
+                _simulationTimer.stop(System.currentTimeMillis());
+                _woodAi.Stop();
+                _capitalAi.Stop();
                 gui.buttonStart.setText("Start");
                 gui.buttonStart.setBackground(Color.GREEN);
 
                 gui.tbStart.setEnabled(true);
-                gui.tbStop.setEnabled(false);                        
+                gui.tbStop.setEnabled(false);
                 jmiStart.setEnabled(true);
                 jmiStop.setEnabled(false);
 
-                habitat.StartHandler( _simulationTimer.workTime );
-                
-                _simulationTimer.stop(System.currentTimeMillis());
+                habitat.StartHandler(_simulationTimer.workTime);
             }
-        }   
+        }
     }
 
     public void DialogResult(int res){
@@ -238,7 +249,10 @@ public class App extends JFrame {
             gui.buttonStart.setBackground(Color.GREEN);
             
             habitat.StartHandler( _simulationTimer.workTime );
-            
+            _woodAi.Stop();
+            _capitalAi.Stop();
+            gui.SetThreadButtonEnable(false);
+
             _simulationTimer.stop(System.currentTimeMillis());
 
             jmiStart.setEnabled(true);
@@ -249,7 +263,9 @@ public class App extends JFrame {
         if ( res == 0 ){
             _simulationTimer.unpause( System.currentTimeMillis() );
             habitat.ContinueHandler();
-
+            _woodAi.Start();
+            _capitalAi.Start();
+            gui.SetThreadButtonEnable(true);
             jmiStart.setEnabled(false);
             jmiStop.setEnabled(true);
             gui.tbStart.setEnabled(false);

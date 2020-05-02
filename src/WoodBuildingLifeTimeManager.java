@@ -1,6 +1,7 @@
 import Buildings.BuildingFactory;
+import Buildings.WoodBuild;
 
-public class WoodBuildingLifeTimeManager extends LifeTimeManager {
+public class WoodBuildingLifeTimeManager extends LifeTimeManager<WoodBuild> {
     public WoodBuildingLifeTimeManager(BuildingFactory buildingFactory) {
         super(buildingFactory);
         SetText(TextBuilder(_buildingFactory.GetWoodBuildingLifeTime()));

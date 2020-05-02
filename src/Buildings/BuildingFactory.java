@@ -18,24 +18,23 @@ public class BuildingFactory {
     public double GetCapitalBuildingLifeTime(){return  _capitalBuildingLifeTime / 1000;}
     public void SetCapitalBuildingLifeTime(double value){ _capitalBuildingLifeTime = value * 1000;}
 
-
     public BuildingFactory(Timer simulationTimer, JLayeredPane habbitViewLayeredPane)
     {
         _simulationTimer = simulationTimer;
         _habbitViewLayeredPane = habbitViewLayeredPane;
     }
 
-    public WoodBuild GetWoodBuilding()
+    public WoodBuild CreateWoodBuilding()
     {
-        WoodBuild temp = new WoodBuild(_simulationTimer.workTime, _woodBuildingLifeTime);
-        _buildings.Add(temp);
+        WoodBuild temp = new WoodBuild(_simulationTimer.workTime, _woodBuildingLifeTime, _habbitViewLayeredPane, 20);
+        _buildings.AddWoodBuilding(temp);
         return temp;
     }
 
-    public CapitalBuild GetCapitalBuilding()
+    public CapitalBuild CreateCapitalBuilding()
     {
-        CapitalBuild temp = new CapitalBuild(_simulationTimer.workTime, _capitalBuildingLifeTime);
-        _buildings.Add(temp);
+        CapitalBuild temp = new CapitalBuild(_simulationTimer.workTime, _capitalBuildingLifeTime, _habbitViewLayeredPane, 1);
+        _buildings.AddCapitalBuilding(temp);
         return temp;
     }
 
@@ -62,4 +61,7 @@ public class BuildingFactory {
     {
         return _buildings.GetAliveBuildings().stream().filter(x -> x instanceof CapitalBuild).count();
     }
+
+    public ArrayList<WoodBuild> WoodBuildings(){return _buildings.WoodBuildings();}
+    public ArrayList<CapitalBuild> CapitalBuildings(){return _buildings.CapitalBuildings();}
 }

@@ -1,5 +1,9 @@
 package Buildings;
 
+import SubClasses.Area;
+
+import javax.swing.*;
+
 public class CapitalBuild extends BaseBuild {
     private static double DefaultP = 0.5;
     private static double DefaultN = 3;
@@ -7,17 +11,15 @@ public class CapitalBuild extends BaseBuild {
     private static double _P = 0.5;
     private static double _N = 3;
 
-    public CapitalBuild(){
-        super("src/img/capitalHouse.png", 0, 10);
-    }
-
-    public CapitalBuild(double bornTime, double lifeTime)
+    public CapitalBuild(double bornTime, double lifeTime, JLayeredPane habbitViewLayeredPane, int speed)
     {
-        super("src/img/capitalHouse.png", bornTime, lifeTime);
-    }
+        super("src/img/capitalHouse.png", bornTime, lifeTime, habbitViewLayeredPane, speed);
 
-    public CapitalBuild(int x, int y){
-        super("src/img/CapitalHouse.png", x, y);
+        int width = (int) habbitViewLayeredPane.getSize().getWidth();
+        int height = (int) habbitViewLayeredPane.getSize().getHeight();
+
+        _finishArea = new Area(0, 0, width/2, height/2);
+        CalculateFinishPosition();
     }
 
     public static double GetDefaultN(){

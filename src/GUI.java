@@ -4,6 +4,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import Buildings.BuildingFactory;
+import Buildings.CapitalAI;
+import Buildings.WoodAI;
 import SubClasses.TimePanel;
 
 public class GUI extends JPanel {
@@ -19,6 +21,8 @@ public class GUI extends JPanel {
     private SettingsManager _settingsManagerWoodBuild;
     private SettingsManager _settingsManagerCapitalBuild;
     private BuildingFactory _buildingFactory;
+    private WoodBuildingThreadManager _woodBuildingThreadManager;
+
 
     public TimePanel workTime;
     
@@ -27,11 +31,12 @@ public class GUI extends JPanel {
                     tbStop,
                     tbTime;
 
-    GUI(BuildingFactory buildingFactory)
+    GUI(BuildingFactory buildingFactory, WoodAI woodAi, CapitalAI capitalAi)
     {
         _buildingFactory = buildingFactory;
-        _settingsManagerWoodBuild = new WoodBuildingsSettingsManager(_buildingFactory);
-        _settingsManagerCapitalBuild = new CapitalBuildingsSettingsManager(_buildingFactory);
+        _settingsManagerWoodBuild = new WoodBuildingsSettingsManager(_buildingFactory, woodAi);
+        _settingsManagerCapitalBuild = new CapitalBuildingsSettingsManager(_buildingFactory, capitalAi);
+
 
         buttonStart.setBackground(Color.GREEN);
         
@@ -96,7 +101,9 @@ public class GUI extends JPanel {
         add(_settingsManagerWoodBuild, constraints);
 
         constraints.insets    = new Insets(20, 10, 0, 10);
-        constraints.gridy = gridy;
+        constraints.gridy = gridy++;
+
+
 
         toolBar.add(tbStart);
         toolBar.add(tbStop);
@@ -118,6 +125,12 @@ public class GUI extends JPanel {
                         JOptionPane.PLAIN_MESSAGE);
             }
         });
+    }
+
+    public void SetThreadButtonEnable(boolean value)
+    {
+        _settingsManagerWoodBuild.SetThreadButtonEnable(value);
+        _settingsManagerCapitalBuild.SetThreadButtonEnable(value);
     }
 
     public void changeProgressBars(int woodBuildProgress, int capitalBuildProgress)

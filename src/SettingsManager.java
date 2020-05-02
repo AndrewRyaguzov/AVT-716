@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import Buildings.BaseAI;
 import Buildings.BuildingFactory;
 import SubClasses.NumberInput;
 
@@ -13,6 +14,8 @@ public abstract class SettingsManager extends JPanel {
     protected CreationFrequencyManager _creationFrequencyManager;
     protected LifeTimeManager _lifeTimeManager;
     protected NumberInput _numberInput;
+    protected BuildingThreadManager _buildingThreadManager;
+    protected BaseAI _ai;
 
     protected BuildingFactory _buildingFactory;
     protected String _type;
@@ -21,10 +24,10 @@ public abstract class SettingsManager extends JPanel {
     private boolean _isVisible = false;
     private JPanel _components;
 
-    public SettingsManager(String type, BuildingFactory buildingFactory) {
+    public SettingsManager(String type, BuildingFactory buildingFactory, BaseAI ai) {
         _buildingFactory = buildingFactory;
         _type = type;
-
+        _ai = ai;
         InitGui();
     }
 
@@ -42,6 +45,7 @@ public abstract class SettingsManager extends JPanel {
         _components.add(_numberInput);
         _components.add(_creationFrequencyManager);
         _components.add(_lifeTimeManager);
+        _components.add(_buildingThreadManager);
         add(_showHideButton, BorderLayout.PAGE_START);
         add(_components);
 
@@ -67,6 +71,10 @@ public abstract class SettingsManager extends JPanel {
 
     public void changeProgressBar(int progress) {
         _numberInput.SetSliderProgress(progress);
+    }
+    public void SetThreadButtonEnable(boolean value)
+    {
+        _buildingThreadManager.ChangeState(value);
     }
 }
 

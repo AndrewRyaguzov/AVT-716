@@ -41,4 +41,6 @@ public class Timer {
         restart(currentTimeMillis);
         pause(currentTimeMillis);
     }
+
+    public double GetCurrentTime(){return workTime;}
 }

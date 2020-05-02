@@ -1,6 +1,7 @@
 import Buildings.BuildingFactory;
+import Buildings.CapitalBuild;
 
-public class CapitalBuildingLifeTimeManager extends LifeTimeManager {
+public class CapitalBuildingLifeTimeManager extends LifeTimeManager<CapitalBuild> {
     public CapitalBuildingLifeTimeManager(BuildingFactory buildingFactory) {
         super(buildingFactory);
         SetText(TextBuilder(_buildingFactory.GetCapitalBuildingLifeTime()));
